@@ -33,7 +33,7 @@ def get_uoais_obj_ids_per_ds(dataset_parent_path: str, dataset_names: str, train
 
 
 def load_uoais_objs(dataset_path: str, obj_ids_per_ds: dict,
-                     num_of_objs_to_sample_per_ds: dict) -> List[MeshObject]:
+                     num_of_objs_to_sample_per_ds: dict, obj_instances_limit: int,) -> List[MeshObject]:
    
     sampled_objs = []
     for dataset_name in obj_ids_per_ds.keys():
@@ -43,17 +43,18 @@ def load_uoais_objs(dataset_path: str, obj_ids_per_ds: dict,
                                             model_type = model_type,
                                             sample_objects = True,
                                             obj_ids = obj_ids_per_ds[dataset_name],
+                                            obj_instances_limit = obj_instances_limit,
                                             num_of_objs_to_sample = num_of_objs_to_sample_per_ds[dataset_name])
     return sampled_objs
 
 def set_random_intrinsics(cfg):
 
-    min_f = cfg["camera"]["focal_length"]["min"]
-    max_f = cfg["camera"]["focal_length"]["max"]
-    mean_cx = float(cfg["camera"]["resolution"]["x"]-1) / 2 
-    mean_cy = float(cfg["camera"]["resolution"]["y"]-1) / 2 
-    min_delta_c = cfg["camera"]["delta_optical_center"]["min"]
-    max_delta_c = cfg["camera"]["delta_optical_center"]["max"]
+    min_f = cfg["simulation"]["camera"]["focal_length"]["min"]
+    max_f = cfg["simulation"]["camera"]["focal_length"]["max"]
+    mean_cx = float(cfg["simulation"]["camera"]["resolution"]["x"]-1) / 2 
+    mean_cy = float(cfg["simulation"]["camera"]["resolution"]["y"]-1) / 2 
+    min_delta_c = cfg["simulation"]["camera"]["delta_optical_center"]["min"]
+    max_delta_c = cfg["simulation"]["camera"]["delta_optical_center"]["max"]
     min_cx = mean_cx + min_delta_c
     max_cx = mean_cx + max_delta_c
     min_cy = mean_cy + min_delta_c
@@ -66,4 +67,4 @@ def set_random_intrinsics(cfg):
         [0, focal, cy], 
         [0, 0, 1]]
 
-    CameraUtility.set_intrinsics_from_K_matrix(K, cfg["camera"]["resolution"]["x"], cfg["camera"]["resolution"]["y"])
+    CameraUtility.set_intrinsics_from_K_matrix(K, cfg["simulation"]["camera"]["resolution"]["x"], cfg["simulation"]["camera"]["resolution"]["y"])
